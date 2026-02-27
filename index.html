@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helix — Market Opportunity Intelligence</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--accent:#1a4b8c;--accent-light:#e8eff8;--accent-dark:#0f2d54;--success:#0d7a3f;--warning:#cc6600;--g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;--g700:#374151;--g800:#1f2937;--r500:#dc2626;--r50:#fde8e8;--r700:#991b1b;--a50:#fff3cd;--a600:#cc6600;--a700:#856404;--gn50:#dcfce7;--gn700:#155724}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--g100);min-height:100vh;color:var(--g800)}
+.ctr{max-width:920px;margin:0 auto;padding:32px 16px}
+header{background:#fff;border-bottom:1px solid var(--g200);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.logo{display:flex;align-items:center;gap:10px}
+.licon{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px}
+.ltxt{font-size:18px;font-weight:700;color:var(--accent)}
+.lsub{font-size:14px;color:var(--g400)}
+.bo{padding:6px 16px;border-radius:8px;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.bo:hover{background:var(--accent-light)}
+.card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--g200)}
+h2.t{color:var(--accent);font-size:20px;margin-bottom:4px}
+p.st{color:var(--g500);font-size:14px;margin-bottom:28px}
+label{display:block;font-size:13px;font-weight:600;color:var(--g700);margin-bottom:6px}
+.rq{color:var(--r500)}.op{color:var(--g400);font-weight:400}
+select,input,textarea{width:100%;padding:10px 14px;border-radius:8px;border:2px solid var(--g200);font-size:14px;font-family:inherit;background:#fff;transition:.2s;outline:none}
+select:focus,input:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical}
+.h{font-size:11px;color:var(--g400);margin-top:4px}.h.e{color:var(--r500)}.h.w{color:var(--a600);font-weight:500}
+.f{margin-bottom:22px;animation:fi .3s ease}
+.bs{width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;letter-spacing:.3px}
+.bs:disabled{background:var(--g300);color:var(--g400);cursor:not-allowed}
+.bs:not(:disabled):hover{opacity:.9}
+.stp{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:32px}
+.sd{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:.3s}
+.sd.a{background:var(--accent);color:#fff}.sd.i{background:var(--g200);color:var(--g400)}
+.sl{font-size:12px;margin:0 6px;white-space:nowrap}
+.sl.a{font-weight:700;color:var(--accent)}.sl.i{color:var(--g400)}
+.sln{width:40px;height:2px;margin:0 4px}.sln.a{background:var(--accent)}.sln.i{background:var(--g200)}
+.spn{width:56px;height:56px;border-radius:50%;border:3px solid var(--accent-light);border-top-color:var(--accent);animation:sp .8s linear infinite;margin:0 auto 24px}
+.ps{display:flex;align-items:center;gap:10px;padding:6px 0;transition:.3s}.ps.d{opacity:.25}
+.ps .ic{width:20px;text-align:center;font-size:14px}
+.bn{border-radius:12px;padding:20px 24px;color:#fff;margin-bottom:20px;background:linear-gradient(135deg,var(--accent) 0%,#2d6bc4 100%)}
+.bn h2{font-size:18px;font-weight:700;margin-bottom:4px}.bn .m{font-size:12px;opacity:.7}.bn .pr{font-size:12px;opacity:.5;font-style:italic;margin-top:10px}
+.mb{display:inline-block;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
+.mb.mt{background:rgba(13,122,63,.2);color:#a7f3d0}.mb.dc{background:rgba(204,102,0,.2);color:#fde68a}
+.tt{display:flex;gap:8px;margin-bottom:16px}
+.tb{flex:1;padding:10px;border-radius:8px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;transition:.2s;border:2px solid var(--g200);background:#fff;color:var(--g500)}
+.tb.a{border-color:var(--accent);background:var(--accent-light);color:var(--accent);font-weight:700}
+.sb{background:var(--g50);border-radius:12px;padding:18px;border:1px solid var(--g200);margin-bottom:14px}
+.sbt{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:10px}
+.fc{padding:10px 14px;background:#fff;border-radius:8px;border:1px solid var(--g200);margin-bottom:8px}
+.trb{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700}
+.trb.t1{background:var(--r50);color:var(--r700)}.trb.t2{background:var(--a50);color:var(--a700)}
+.trb.t3{background:#d4edda;color:var(--gn700)}.trb.t4{background:var(--g200);color:var(--g500)}.trb.t5{background:var(--g50);color:var(--g500)}
+.cb{display:flex;align-items:center;gap:3px}.cd{width:12px;height:5px;border-radius:3px}.cd.on{background:var(--accent)}.cd.off{background:#ddd}
+.cl{font-size:10px;color:var(--g400);margin-left:4px}
+.sgb{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.sgb.inv{background:var(--gn50);color:var(--success)}.sgb.res{background:var(--a50);color:var(--warning)}.sgb.mon{background:var(--g200);color:var(--g500)}.sgb.dep{background:var(--r50);color:var(--r700)}
+.rb{display:inline-block;padding:6px 16px;border-radius:8px;font-size:14px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:8px 10px;text-align:left;background:var(--accent);color:#fff;font-weight:600}
+th.c{text-align:center}td{padding:10px;border-bottom:1px solid var(--g200);vertical-align:top}
+tr:nth-child(even){background:var(--g50)}
+.sv{font-weight:700;font-size:11px;display:block;margin-bottom:2px}.sv.hi{color:var(--r700)}.sv.me{color:var(--a700)}.sv.lo{color:var(--r500)}.sv.nr{color:var(--g500)}
+.gb{border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid}
+.gb.gp{background:var(--a50);border-color:#ffc107}.gb.br{background:var(--r50);border-color:#f5c6cb}
+.gi{padding:8px 12px;background:#fff;border-radius:6px;font-size:12px;margin-bottom:6px}
+.dw{padding:10px 14px;border-radius:8px;background:var(--a50);border:1px solid #ffc107;font-size:12px;color:var(--a700);margin-top:10px}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ci label{font-size:11px;color:var(--g400);margin-bottom:2px}.ci span{font-size:14px;color:var(--g800)}
+.dc{padding:14px;background:#fff;border-radius:8px;border:1px solid var(--g200);margin-bottom:10px}
+.dc .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.dc p{font-size:12px;color:var(--g700);line-height:1.6;margin-bottom:4px}
+footer{text-align:center;padding:24px;font-size:12px;color:var(--g400)}
+.nav-tabs{display:flex;gap:2px;background:var(--g200);padding:3px;border-radius:10px;margin-bottom:24px}
+.nav-tab{flex:1;padding:8px 12px;border-radius:8px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;transition:.2s;background:transparent;color:var(--g500);border:none}
+.nav-tab.active{background:#fff;color:var(--accent);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.settings-box{background:#fff;border-radius:12px;padding:20px;border:1px solid var(--g200);margin-bottom:16px}
+.settings-box h3{font-size:14px;color:var(--accent);margin-bottom:12px}
+.settings-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.settings-row label{font-size:12px;color:var(--g500);min-width:100px;margin-bottom:0}
+.settings-row input{flex:1;padding:8px 12px;font-size:13px}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.status-dot.ok{background:var(--success)}.status-dot.off{background:var(--r500)}
+.hist-card{background:#fff;border-radius:10px;padding:14px 18px;border:1px solid var(--g200);margin-bottom:10px;cursor:pointer;transition:.2s}
+.hist-card:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(26,75,140,.1)}
+.hist-card .hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.hist-card .prb{font-size:12px;color:var(--g500);line-height:1.5}
+.hist-card .meta{font-size:11px;color:var(--g400);margin-top:6px}
+.share-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--accent);background:#fff;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;transition:.2s}
+.share-btn:hover{background:var(--accent-light)}
+.share-banner{background:var(--gn50);border:1px solid #86efac;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--success);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.empty-state{text-align:center;padding:48px 20px;color:var(--g400)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.saved-toast{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:100;animation:fi .3s ease;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:640px){.ctr{padding:16px 8px}.card{padding:18px}.bn{padding:16px}.tt{flex-direction:column}.cg{grid-template-columns:1fr}th,td{padding:6px 4px;font-size:10px}.lsub{display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ============================================================
+// REAL HELIX FOUNDATION DATA (92 approved outcomes)
+// ============================================================
+const STEPS = [
+  {step_id:"STEP-PURCH-001",name:"Access Merchant Platform",seq:1,desc:"The customer gains access to the merchant environment to browse and evaluate products or services"},
+  {step_id:"STEP-PURCH-002",name:"Establish Purchase Intent",seq:2,desc:"The customer verifies that the item, seller, pricing, and terms meet their needs"},
+  {step_id:"STEP-PURCH-003",name:"Initiate Purchase",seq:3,desc:"The customer begins the purchase process"},
+  {step_id:"STEP-PURCH-004",name:"Provide & Confirm Fulfillment Details",seq:4,desc:"The customer provides and verifies delivery and communication info"},
+  {step_id:"STEP-PURCH-005",name:"Select Payment Method",seq:5,desc:"Determine how to pay and select the preferred payment option"},
+  {step_id:"STEP-PURCH-006",name:"Apply Available Savings",seq:6,desc:"Identify and apply offers, discounts, rewards"},
+  {step_id:"STEP-PURCH-007",name:"Authorize & Submit Payment",seq:7,desc:"The customer confirms and authorizes the payment"},
+  {step_id:"STEP-PURCH-008",name:"Receive Confirmation & Verify Order",seq:8,desc:"Confirm the order was placed correctly"},
+  {step_id:"STEP-PURCH-009",name:"Manage Post-Purchase Needs",seq:9,desc:"Handle follow-up needs including tracking, returns, issues"}
+];
+
+const OUTCOMES = {
+  "STEP-PURCH-001":[
+    {id:"OUT-PURCH-001",name:"Minimize time required to access the merchant",type:"functional"},
+    {id:"OUT-PURCH-002",name:"Minimize the amount of information required to access the merchant",type:"functional"},
+    {id:"OUT-PURCH-003",name:"Minimize effort required to resume a paused shopping activity",type:"functional"},
+    {id:"OUT-PURCH-004",name:"Maximize protection of personal data during access",type:"functional"},
+  ],
+  "STEP-PURCH-003":[
+    {id:"OUT-PURCH-016",name:"Minimize time required to initiate the purchase process",type:"functional"},
+    {id:"OUT-PURCH-017",name:"Minimize the number of steps required to begin checkout",type:"functional"},
+    {id:"OUT-PURCH-018",name:"Maximize clarity of what is required to proceed with the purchase",type:"functional"},
+  ],
+  "STEP-PURCH-005":[
+    {id:"OUT-PURCH-034",name:"Minimize time required to select preferred payment option",type:"functional"},
+    {id:"OUT-PURCH-035",name:"Minimize confusion when choosing among available methods",type:"functional"},
+    {id:"OUT-PURCH-036",name:"Minimize likelihood of payment failure",type:"functional"},
+    {id:"OUT-PURCH-038",name:"Maximize assurance that stored payment information is secure",type:"functional"},
+    {id:"OUT-PURCH-040",name:"Minimize likelihood of unauthorized use of my payment method",type:"functional"},
+    {id:"OUT-PURCH-041",name:"Maximize feeling of control over payment decisions",type:"emotional"},
+    {id:"OUT-PURCH-042",name:"Maximize confidence that financial data is safe",type:"emotional"},
+    {id:"OUT-PURCH-043",name:"Minimize frustration when a preferred payment method is unavailable",type:"emotional"},
+    {id:"OUT-PURCH-045",name:"Minimize anxiety during the payment selection process",type:"emotional"},
+    {id:"OUT-PURCH-085",name:"Minimize time required to regain authorized access to complete payment",type:"functional",cond:"access_interrupted"},
+    {id:"OUT-PURCH-086",name:"Maximize clarity on what is required to regain authorized access",type:"functional",cond:"access_interrupted"},
+    {id:"OUT-PURCH-087",name:"Minimize anxiety caused by uncertainty during payment access recovery",type:"emotional",cond:"access_interrupted"},
+  ],
+  "STEP-PURCH-006":[
+    {id:"OUT-PURCH-047",name:"Minimize effort required to find applicable discounts or offers",type:"functional"},
+    {id:"OUT-PURCH-048",name:"Maximize visibility of all available savings options before payment",type:"functional"},
+    {id:"OUT-PURCH-049",name:"Minimize likelihood of missing an available discount",type:"functional"},
+    {id:"OUT-PURCH-096",name:"Maximize clarity on pay-later terms and total cost over time",type:"functional"},
+    {id:"OUT-PURCH-097",name:"Minimize regret about not getting the best available price",type:"emotional"},
+  ],
+  "STEP-PURCH-007":[
+    {id:"OUT-PURCH-050",name:"Minimize time required to complete payment authorization",type:"functional"},
+    {id:"OUT-PURCH-051",name:"Minimize likelihood of authorization failure",type:"functional"},
+    {id:"OUT-PURCH-052",name:"Maximize clarity of what happens after payment is submitted",type:"functional"},
+    {id:"OUT-PURCH-053",name:"Minimize the number of authentication steps required to authorize",type:"functional"},
+    {id:"OUT-PURCH-054",name:"Maximize confidence that the transaction will be processed correctly",type:"emotional"},
+    {id:"OUT-PURCH-055",name:"Minimize anxiety during payment processing wait time",type:"emotional"},
+  ],
+  "STEP-PURCH-008":[
+    {id:"OUT-PURCH-065",name:"Minimize delay in receiving confirmation",type:"functional"},
+    {id:"OUT-PURCH-066",name:"Maximize visibility of expected delivery timing",type:"functional"},
+    {id:"OUT-PURCH-067",name:"Maximize access to accurate and complete order documentation",type:"functional"},
+    {id:"OUT-PURCH-068",name:"Maximize ability to track fulfillment progress after placing the order",type:"functional"},
+    {id:"OUT-PURCH-069",name:"Maximize confidence that the order is complete",type:"emotional"},
+    {id:"OUT-PURCH-070",name:"Maximize clarity about what happens next after placing the order",type:"functional"},
+  ],
+  "STEP-PURCH-009":[
+    {id:"OUT-PURCH-075",name:"Minimize effort required to initiate a return or refund",type:"functional"},
+    {id:"OUT-PURCH-076",name:"Minimize time to receive refund after return",type:"functional"},
+    {id:"OUT-PURCH-077",name:"Maximize clarity on return and refund eligibility",type:"functional"},
+    {id:"OUT-PURCH-078",name:"Maximize clarity on dispute resolution options",type:"functional"},
+    {id:"OUT-PURCH-079",name:"Minimize effort required to escalate an unresolved issue",type:"functional"},
+    {id:"OUT-PURCH-080",name:"Minimize anxiety about losing money on a disputed transaction",type:"emotional"},
+  ]
+};
+
+const PERSONA_JOBS = {
+  Consumer:[
+    {id:"JOB-PURCH-001",name:"Complete a Purchase",available:true},
+    {id:"JOB-P2P-001",name:"Send Money to Someone",available:false},
+    {id:"JOB-UNSURE-001",name:"Not Sure",available:false}
+  ],
+  Merchant:[
+    {id:"JOB-SALE-001",name:"Make a Sale",available:false},
+    {id:"JOB-UNSURE-002",name:"Not Sure",available:false}
+  ]
+};
+
+// ============================================================
+// SMART MOCK EVALUATION ENGINE
+// ============================================================
+
+function findBestStep(problem) {
+  const p = problem.toLowerCase();
+  const stepKws = [
+    {id:"STEP-PURCH-001",kws:["browse","navigate","find product","search","site","website","app","open","landing","homepage","store","shop front","marketplace","discover"]},
+    {id:"STEP-PURCH-002",kws:["compare","price","pricing","trust","seller","review","rating","product detail","specification","quality","legitimate","fake","scam","evaluate product","choose product","product info"]},
+    {id:"STEP-PURCH-003",kws:["checkout","begin checkout","start checkout","initiate","cart","proceed","sign in","log in","login","account create","register","onboard","guest checkout"]},
+    {id:"STEP-PURCH-004",kws:["address","shipping","delivery option","fulfillment","phone number","email","contact info","billing address","zip","postal","form fill","personal info","delivery details"]},
+    {id:"STEP-PURCH-005",kws:["payment method","pay with","card","wallet","select payment","credit card","debit","bank account","paypal button","venmo","instrument","stored card","payment option","password","recover","forgot","authentication","biometric","passkey","locked out","reset password","credential","otp","2fa","mfa","sca","verify identity","login failure","access recovery"]},
+    {id:"STEP-PURCH-006",kws:["coupon","discount","promo","offer","reward","cashback","points","savings","deal","voucher","code","loyalty","installment","pay later","bnpl","credit offer","split pay","pay in 4"]},
+    {id:"STEP-PURCH-007",kws:["authorize","submit payment","confirm payment","approve","complete transaction","processing","decline","payment fail","error","timeout","3ds","otp confirm","review order","final confirm","place order","transaction fail"]},
+    {id:"STEP-PURCH-008",kws:["confirmation","receipt","order confirm","verify order","email confirm","order summary","order number","tracking number","expected delivery","what happens next","order status"]},
+    {id:"STEP-PURCH-009",kws:["return","refund","dispute","track package","shipping status","delivery status","post-purchase","cancel order","exchange","complaint","support","help","customer service","chargeback","damaged","wrong item","missing","late delivery"]}
+  ];
+  let best=null,bestScore=0;
+  for(const s of stepKws){let score=0;for(const k of s.kws){if(p.includes(k))score+=k.split(" ").length}if(score>bestScore){bestScore=score;best=s.id}}
+  if(bestScore<2){
+    if(/refund|return|cancel|disput|complain|chargeback|damaged|wrong item/.test(p))best="STEP-PURCH-009";
+    else if(/ship|deliver|address|postal/.test(p))best="STEP-PURCH-004";
+    else if(/coupon|discount|offer|reward|bnpl|pay later|installment/.test(p))best="STEP-PURCH-006";
+    else if(/confirm|receipt|order status|tracking/.test(p))best="STEP-PURCH-008";
+    else if(/checkout|cart|sign in|log in|guest/.test(p))best="STEP-PURCH-003";
+    else if(/browse|search|find|discover|shop/.test(p))best="STEP-PURCH-001";
+    else if(/compare|price|trust|review|quality/.test(p))best="STEP-PURCH-002";
+    else if(/decline|fail|submit|authorize|place order/.test(p))best="STEP-PURCH-007";
+    else if(/pay|payment|card|wallet/.test(p))best="STEP-PURCH-005";
+    else best="STEP-PURCH-005";
+  }
+  return best;
+}
+
+function isPasswordRecovery(problem) {
+  const p = problem.toLowerCase();
+  return ["password","forgot password","recover access","locked out","reset password","credential","authentication fail","login fail","can't log in","unable to log","unable to access","access recovery","account locked","session expired","biometric fail","passkey"].some(k => p.includes(k));
+}
+
+function generateEvaluations(stepId, problem, market, matched) {
+  const outcomes = OUTCOMES[stepId] || OUTCOMES["STEP-PURCH-005"];
+  const isPwdRecovery = isPasswordRecovery(problem);
+  const step = STEPS.find(s => s.step_id === stepId);
+
+  // Filter outcomes - for password recovery, include access_interrupted outcomes
+  let relevant = isPwdRecovery
+    ? outcomes.filter(o => o.cond === "access_interrupted" || ["OUT-PURCH-034","OUT-PURCH-036","OUT-PURCH-045","OUT-PURCH-042"].includes(o.id))
+    : outcomes.filter(o => !o.cond).slice(0, 6);
+
+  if (relevant.length === 0) relevant = outcomes.slice(0, 5);
+
+  const evals = relevant.map((o, i) => {
+    // Smart scoring based on outcome characteristics
+    let imp, sat, tier, kano, signal, impConf, satConf;
+
+    if (o.cond === "access_interrupted") {
+      // Password recovery outcomes — high importance, low satisfaction (the POC result)
+      imp = "high"; sat = "low"; tier = "tier_1"; kano = i===0?"performance":"must_be"; signal = matched?"invest":"research_first";
+      impConf = matched ? 4 : 2; satConf = matched ? 3 : 1;
+    } else if (o.type === "emotional") {
+      imp = "high"; sat = "medium"; tier = "tier_2"; kano = "must_be"; signal = "research_first";
+      impConf = matched ? 3 : 2; satConf = matched ? 3 : 1;
+    } else if (o.name.includes("Minimize time") || o.name.includes("Minimize likelihood")) {
+      imp = "high"; sat = i < 2 ? "low" : "medium"; tier = i < 2 ? "tier_1" : "tier_2"; kano = "performance"; signal = matched && i < 2 ? "invest" : "research_first";
+      impConf = matched ? 4 : 2; satConf = matched ? 3 : 1;
+    } else {
+      imp = "medium"; sat = "medium"; tier = "tier_4"; kano = "performance"; signal = "monitor";
+      impConf = matched ? 3 : 2; satConf = matched ? 2 : 1;
+    }
+
+    const tierLabels = {tier_1:"Underserved — highest opportunity",tier_2:"Competitive — room to differentiate",tier_3:"Table stakes — must maintain",tier_4:"Monitor — revisit if context changes",tier_5:"Deprioritise — not relevant now"};
+    const impRationales = {
+      high: [`Frequently mentioned unprompted in ${market} customer research; strong frustration when unmet.`,`Blocking outcome — job cannot complete without this. High consequence of failure in ${market} market.`,`Consistently reported as top friction point across ${market} checkout research.`,`Emotional impact consistently reported in checkout abandonment studies for ${market}.`],
+      medium: [`Mentioned when prompted; moderate frustration reported in ${market} studies.`,`Non-blocking but affects conversion quality in ${market} market.`],
+      low: [`Rarely mentioned in ${market} research; low frustration when unmet.`]
+    };
+    const satRationales = {
+      low: [`Current PayPal flow averages 45s under SCA in ${market}. Competitors offer sub-5s biometric paths.`,`No progress indicators or time estimates during recovery flow in ${market}.`,`Significant unmet need; consistent friction and workarounds reported.`],
+      medium: [`Current flow provides basic functionality but lacks progressive disclosure in ${market}.`,`Partial achievement; manageable friction but workarounds exist.`],
+      high: [`Current solution fully meets outcome; no friction reported in ${market}.`]
+    };
+
+    return {
+      eval_id: `EVAL-${String(i+1).padStart(3,"0")}`,
+      out_id: o.id,
+      outcome_name: o.name,
+      outcome_type: o.type,
+      step_name: step?.name || "",
+      importance: { value: imp, rationale: impRationales[imp][i % impRationales[imp].length], confidence: impConf },
+      satisfaction: { value: sat, rationale: satRationales[sat][i % satRationales[sat].length], confidence: satConf },
+      opportunity_score: tier,
+      opportunity_derivation: `${imp} importance + ${sat} satisfaction = ${tierLabels[tier]}`,
+      opportunity_confidence: Math.min(impConf, satConf),
+      kano_classification: kano,
+      kano_rationale: kano === "performance" ? "More is linearly better; customers know variations exist across competitors." : kano === "must_be" ? "Customers know this could be better AND expect it should be." : "Customers do NOT know or expect improvement is possible.",
+      barriers: i < 2 ? [
+        {id:`BAR-${String(i+1).padStart(3,"0")}`, description: i===0 ? `SCA regulation mandates additional authentication steps that add friction in ${market}.` : `Legacy infrastructure prevents seamless fallback mechanisms in ${market} checkout flows.`}
+      ] : [],
+      gaps: i < 3 ? [
+        {id:`GAP-${String(i+1).padStart(3,"0")}`, description: i===0 ? `Passkeys adoption rate unknown in ${market} mobile — blocks final investment sizing.` : i===1 ? `No A-grade evidence on competitor biometric recovery completion rates in ${market}.` : `Customer expectation data insufficient to confirm Kano classification.`}
+      ] : [],
+      invest_signal: signal,
+      invest_rationale: signal === "invest" ? `Tier 1 underserved outcome with confidence ≥3 in ${market} scope.` : signal === "research_first" ? `Evidence gaps on ${matched?"satisfaction dimension":"both dimensions"} — research required before investment.` : `Medium priority — monitor for context changes in ${market}.`
+    };
+  });
+
+  const tier1 = evals.filter(e => e.opportunity_score === "tier_1").length;
+  const tier2 = evals.filter(e => e.opportunity_score === "tier_2").length;
+  const overallConf = matched ? 3 : 1;
+
+  return {
+    evaluations: evals,
+    summary: {
+      decision_context: `Assessment of "${problem.substring(0,80)}${problem.length>80?"...":""}" for the ${market} market. ${matched ? "Foundations matched from approved Helix library. Evaluation scope: "+step?.name+" step within Complete a Purchase job." : "Discovery Mode — proposed foundations require governance approval before canonical use."}`,
+      recommendation: tier1 > 0 && matched
+        ? `Invest — ${tier1} underserved outcome(s) identified with directional evidence in ${market}. ${tier2} competitive gap(s) also present. Research gaps exist on competitive metric evidence but directional signal is strong enough for investment at confidence ${overallConf}.`
+        : `Research first — ${matched ? "evidence gaps exist on key dimensions" : "proposed foundations require governance approval and evidence structuring"} before investment decisions can be made for ${market}. Commission research on ${evals.flatMap(e=>e.gaps).length} identified knowledge gaps.`,
+      overall_confidence: overallConf,
+      key_findings: [
+        `${evals.length} outcomes evaluated across the ${step?.name || "selected"} step in ${market} scope.`,
+        tier1 > 0 ? `${tier1} outcome(s) scored as Tier 1 (underserved — highest opportunity). These represent the strongest investment targets.` : "No Tier 1 outcomes — all outcomes are adequately served or require more research.",
+        matched ? "Foundations are approved and governed — scores are directional with traceable evidence basis." : "All foundations are proposed (not approved). Governance review required before canonical use.",
+        evals.flatMap(e=>e.gaps).length > 0 ? `${evals.flatMap(e=>e.gaps).filter((g,i,a)=>a.findIndex(x=>x.id===g.id)===i).length} knowledge gap(s) identified — these constrain invest signals and should be prioritized for research.` : "No critical knowledge gaps identified.",
+        evals.flatMap(e=>e.barriers).length > 0 ? `${evals.flatMap(e=>e.barriers).filter((b,i,a)=>a.findIndex(x=>x.id===b.id)===i).length} structural barrier(s) identified that may require platform-level solutions.` : "",
+      ].filter(Boolean),
+      total_outcomes: evals.length,
+      tier_1_count: tier1,
+      tier_2_count: tier2,
+      overall_invest_signal: tier1 > 0 && matched ? "invest" : "research_first"
+    },
+    matched
+  };
+}
+
+function generateDiscovery(persona, jobId, problem, market) {
+  const p = problem.toLowerCase();
+  let jobName, jobDesc, steps, outcomes;
+
+  if (p.includes("subscription") || p.includes("recurring")) {
+    jobName = "Manage Subscription Payments";
+    jobDesc = "When I have recurring payment obligations, I want to manage them effectively so that I maintain control over my finances and commitments.";
+    steps = [{id:"STEP-NEW-001",name:"Review Subscription Terms",seq:1},{id:"STEP-NEW-002",name:"Authorize Recurring Payment",seq:2},{id:"STEP-NEW-003",name:"Monitor Subscription Status",seq:3}];
+    outcomes = [
+      {id:"OUT-NEW-001",step_id:"STEP-NEW-001",name:"Minimize effort required to understand recurring payment obligations",type:"functional"},
+      {id:"OUT-NEW-002",step_id:"STEP-NEW-002",name:"Maximize control over when and how recurring payments are executed",type:"functional"},
+      {id:"OUT-NEW-003",step_id:"STEP-NEW-002",name:"Minimize likelihood of unexpected charges from subscriptions",type:"functional"},
+      {id:"OUT-NEW-004",step_id:"STEP-NEW-003",name:"Maximize visibility of upcoming subscription charges",type:"functional"},
+      {id:"OUT-NEW-005",step_id:"STEP-NEW-003",name:"Minimize anxiety about forgotten or unwanted subscriptions",type:"emotional"},
+    ];
+  } else if (p.includes("send") || p.includes("transfer") || p.includes("p2p")) {
+    jobName = "Send Money to Someone";
+    jobDesc = "When I need to transfer money to another person, I want to send it quickly and securely so that the recipient gets the funds as expected.";
+    steps = [{id:"STEP-NEW-001",name:"Identify Recipient",seq:1},{id:"STEP-NEW-002",name:"Specify Transfer Amount",seq:2},{id:"STEP-NEW-003",name:"Authorize Transfer",seq:3},{id:"STEP-NEW-004",name:"Confirm Delivery",seq:4}];
+    outcomes = [
+      {id:"OUT-NEW-001",step_id:"STEP-NEW-001",name:"Minimize time required to identify and select the correct recipient",type:"functional"},
+      {id:"OUT-NEW-002",step_id:"STEP-NEW-002",name:"Maximize clarity on fees and exchange rates before sending",type:"functional"},
+      {id:"OUT-NEW-003",step_id:"STEP-NEW-003",name:"Minimize likelihood of sending money to the wrong person",type:"functional"},
+      {id:"OUT-NEW-004",step_id:"STEP-NEW-004",name:"Maximize confidence that funds were received by the intended recipient",type:"emotional"},
+      {id:"OUT-NEW-005",step_id:"STEP-NEW-003",name:"Minimize anxiety about transaction security during transfer",type:"emotional"},
+    ];
+  } else {
+    jobName = "Complete a Merchant Transaction";
+    jobDesc = "When I am conducting business as a merchant, I want to complete transactions efficiently so that both my business and customers are satisfied.";
+    steps = [{id:"STEP-NEW-001",name:"Present Offer to Customer",seq:1},{id:"STEP-NEW-002",name:"Process Customer Payment",seq:2},{id:"STEP-NEW-003",name:"Confirm and Fulfill Order",seq:3}];
+    outcomes = [
+      {id:"OUT-NEW-001",step_id:"STEP-NEW-001",name:"Minimize time required to set up payment acceptance",type:"functional"},
+      {id:"OUT-NEW-002",step_id:"STEP-NEW-002",name:"Maximize the rate of successful payment completions",type:"functional"},
+      {id:"OUT-NEW-003",step_id:"STEP-NEW-002",name:"Minimize cost of payment processing per transaction",type:"functional"},
+      {id:"OUT-NEW-004",step_id:"STEP-NEW-003",name:"Maximize speed of fund availability after payment",type:"functional"},
+      {id:"OUT-NEW-005",step_id:"STEP-NEW-003",name:"Minimize anxiety about chargebacks and fraud",type:"emotional"},
+    ];
+  }
+
+  return {
+    matched: false,
+    confidence: 0,
+    proposed_job: {job_id:"JOB-NEW-001", name: jobName, description: jobDesc},
+    proposed_steps: steps.map(s => ({step_id:s.id, name:s.name, sequence_number:s.seq})),
+    proposed_outcomes: outcomes,
+    match_rationale: `No approved foundations exist for "${jobName}" in the Helix library. Proposed foundations require governance approval before canonical use.`
+  };
+}
+
+// ============================================================
+// RENDER ENGINE
+// ============================================================
+const app = () => document.getElementById("app");
+let S = {screen:"form",fd:{},out:null,err:"",ps:0,at:1};
+
+function trb(t){const c={tier_1:["t1","Tier 1 — Underserved"],tier_2:["t2","Tier 2 — Competitive"],tier_3:["t3","Tier 3 — Table Stakes"],tier_4:["t4","Tier 4 — Monitor"],tier_5:["t5","Tier 5 — Deprioritise"]};const[cls,l]=c[t]||c.tier_5;return`<span class="trb ${cls}">${l}</span>`}
+function cfb(v,mx=5){let h='<div class="cb">';for(let i=0;i<mx;i++)h+=`<div class="cd ${i<v?"on":"off"}"></div>`;return h+`<span class="cl">${v}/${mx}</span></div>`}
+function sgb(s){const sig=(s||"research_first").replace(/_/g," ");const c=s==="invest"?"inv":s==="research_first"?"res":s==="deprioritise"?"dep":"mon";return`<span class="sgb ${c}">${sig}</span>`}
+function sv(v){const c=v==="high"?"hi":v==="medium"?"me":v==="low"?"lo":"nr";return`<span class="sv ${c}">${(v||"NR").toUpperCase()}</span>`}
+
+function render(){
+  const s=S.screen, n=S.nav||'assess', sn=s==="form"?0:s==="processing"?1:2;
+  const steps=["Input","Processing","Output"];
+  const stepper=`<div class="stp">${steps.map((x,i)=>`<div class="sd ${i<=sn?"a":"i"}">${i<sn?"✓":i+1}</div><span class="sl ${i===sn?"a":"i"}">${x}</span>${i<2?`<div class="sln ${i<sn?"a":"i"}"></div>`:""}`).join("")}</div>`;
+  const hdr=`<header><div class="logo"><div class="licon">H</div><span class="ltxt">HELIX</span><span class="lsub">Market Opportunity Intelligence</span></div>
+    ${s==="output"&&n==="assess"?`<button class="bo" onclick="reset()">← New Assessment</button>`:""}</header>`;
+  const nav=`<div class="nav-tabs">
+    <button class="nav-tab ${n==='assess'?'active':''}" onclick="setNav('assess')">📋 Assess</button>
+    <button class="nav-tab ${n==='history'?'active':''}" onclick="setNav('history')">📊 History${(S.histData||[]).length?' ('+(S.histData||[]).length+')':''}</button>
+    <button class="nav-tab ${n==='settings'?'active':''}" onclick="setNav('settings')">⚙️ Settings</button></div>`;
+
+  let body="";
+  if(n==='settings') body=renderSettings();
+  else if(n==='history') body=renderHistoryView();
+  else { if(s==="form")body=renderForm();else if(s==="processing")body=renderProc();else if(s==="error")body=renderErr();else body=renderOut(); }
+  app().innerHTML=`${hdr}<div class="ctr">${nav}${n==='assess'?stepper:''}${body}</div><footer>AI Native App by <strong>Shikha Bhatt</strong> · Helix Framework by <strong>Ankita Agarwal</strong> — PayPal</footer>`;
+}
+
+function renderForm(){
+  const pe=S.fd.persona||"",ji=S.fd.jobId||"",pr=S.fd.problem||"",mk=S.fd.market||"";
+  const jobs=PERSONA_JOBS[pe]||[];
+  const sj=jobs.find(j=>j.id===ji);
+  const ok=pe&&ji&&pr.length>=10;
+  return`<div class="card"><h2 class="t">Opportunity Assessment Form</h2><p class="st">Describe a customer problem and Helix will assess it against the JTBD framework to size the market opportunity.</p>
+  <div style="max-width:560px;margin:0 auto">
+    <div class="f"><label>Target User Persona <span class="rq">*</span></label>
+      <select onchange="chPe(this.value)"><option value="" disabled ${!pe?"selected":""}>Select a persona...</option><option value="Consumer" ${pe==="Consumer"?"selected":""}>Consumer</option><option value="Merchant" ${pe==="Merchant"?"selected":""}>Merchant</option></select></div>
+    ${pe?`<div class="f"><label>User Job <span class="rq">*</span></label>
+      <select onchange="chJo(this.value)"><option value="" disabled ${!ji?"selected":""}>Select a job...</option>${jobs.map(j=>`<option value="${j.id}" ${j.id===ji?"selected":""}>${j.name}</option>`).join("")}</select>
+      <p class="h">${pe==="Consumer"?"3 jobs for Consumer":"2 jobs for Merchant"}${sj&&!sj.available&&ji.indexOf("UNSURE")===-1?`<span class="h w"> — No approved foundations. Will enter Discovery Mode.</span>`:""}</p></div>`:""}
+    ${ji?`<div class="f"><label>Problem Statement <span class="rq">*</span></label>
+      <textarea id="pi" rows="4" placeholder="Describe the customer problem you want to assess...&#10;&#10;e.g., Customers are unable to quickly recover access when they forget their password during checkout" oninput="updBtn()">${pr}</textarea>
+      <p id="pcnt" class="h ${pr.length>0&&pr.length<10?"e":""}">${pr.length}/1000 characters (minimum 10)</p></div>
+    <div class="f"><label>Market <span class="op">(optional)</span></label>
+      <input id="mi" placeholder="e.g., EU, US, LATAM, Global" value="${mk}" oninput="updBtn()">
+      <p class="h">Maps to Interaction Boundary scope. Defaults to Global if empty.</p></div>`:""}
+    <button class="bs" ${ok?"":"disabled"} onclick="go()">⚡ Opportunity Sizing</button>
+  </div></div>`;
+}
+
+function renderProc(){
+  const st=["Validating problem statement...","Matching against approved foundations...","Identifying relevant outcomes...","Scoring importance dimensions...","Scoring satisfaction dimensions...","Deriving opportunity tiers...","Classifying Kano categories...","Surfacing knowledge gaps...","Generating three-tier output..."];
+  return`<div class="card" style="text-align:center"><div class="spn"></div><h3 style="color:var(--accent);font-size:16px;margin-bottom:28px">Running Helix Evaluation Pipeline</h3>
+  <div style="text-align:left;max-width:400px;margin:0 auto">${st.map((s,i)=>`<div class="ps ${i<=S.ps?"":"d"}"><span class="ic">${i<S.ps?"✅":i===S.ps?"⏳":"○"}</span><span style="font-size:13px;color:${i<=S.ps?"#111":"#ccc"}">${s}</span></div>`).join("")}</div></div>`;
+}
+
+function renderErr(){
+  return`<div class="card" style="text-align:center;padding:48px"><div style="font-size:48px;margin-bottom:16px">⚠️</div><h3 style="color:var(--r700);font-size:16px;margin-bottom:12px">Assessment Failed</h3><p style="font-size:13px;color:var(--g500);margin-bottom:24px">${S.err}</p><button class="bo" onclick="reset()">← Try Again</button></div>`;
+}
+
+function renderOut(){
+  const d=S.out,f=S.fd,t=S.at,ev=d.evaluations||[];
+  const sig=ev[0]?.invest_signal||d.summary?.overall_invest_signal||"research_first";
+  const ag=ev.flatMap(e=>e.gaps||[]).filter((g,i,a)=>a.findIndex(x=>x.id===g.id)===i);
+  const ab=ev.flatMap(e=>e.barriers||[]).filter((b,i,a)=>a.findIndex(x=>x.id===b.id)===i);
+
+  let h=`<div class="bn"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div><h2>Opportunity Assessment</h2><p class="m">${f.persona} → ${f.jobName} → ${f.market}</p></div>
+    <span class="mb ${d.matched?"mt":"dc"}">${d.matched?"✓ Matched to Foundations":"⚠ Discovery Mode — Proposed"}</span></div>
+    <p class="pr">"${f.problem.substring(0,140)}${f.problem.length>140?"...":""}"</p></div>
+    <div class="tt"><div class="tb ${t===1?"a":""}" onclick="st(1)">Tier 1: Executive</div><div class="tb ${t===2?"a":""}" onclick="st(2)">Tier 2: Evidence</div><div class="tb ${t===3?"a":""}" onclick="st(3)">Tier 3: Detail</div></div>`;
+
+  if(t===1){
+    h+=`<div style="animation:fi .3s"><div class="sb"><div class="sbt">Section 0 — Decision Context</div><p style="font-size:13px;line-height:1.7;color:var(--g700)">${d.summary?.decision_context||""}</p>${!d.matched?`<div class="dw">⚠ Discovery Mode: Foundations are proposed, not approved. Confidence reflects limited evidential basis. Governance review required.</div>`:""}</div>
+    <div class="sb"><div class="sbt">Section 1 — Recommendation</div><div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><span class="rb" style="background:${sig==="invest"?"var(--gn50)":sig==="research_first"?"var(--a50)":"var(--g200)"};color:${sig==="invest"?"var(--success)":sig==="research_first"?"var(--warning)":"var(--g500)"}">${(sig||"").toUpperCase().replace(/_/g," ")}</span><span style="font-size:13px;color:var(--g500)">Confidence: <strong>${d.summary?.overall_confidence||0}/5</strong></span></div>
+    <p style="font-size:13px;color:var(--g700)">${d.summary?.recommendation||""}</p></div>
+    <div class="sb"><div class="sbt">Section 2 — Key Findings</div>${ev.slice(0,4).map(e=>`<div class="fc"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">${trb(e.opportunity_score)}<span style="font-size:11px;color:var(--g400)">Confidence: ${e.opportunity_confidence}/5</span></div><p style="font-size:12px;color:var(--g700)"><strong>${e.outcome_name}</strong> — ${e.importance?.rationale||""}</p></div>`).join("")}
+    ${(d.summary?.key_findings||[]).map(kf=>`<p style="font-size:11px;color:var(--g500);padding-left:12px;border-left:2px solid var(--g200);margin:6px 0">${kf}</p>`).join("")}</div></div>`;
+  }
+
+  if(t===2){
+    const ms=d.matchResult||d;
+    h+=`<div style="animation:fi .3s"><div class="sb"><div class="sbt">Section 3 — Customer Context</div><div class="cg"><div class="ci"><label>Segment</label><span>${f.persona}</span></div><div class="ci"><label>Job</label><span>${f.jobName}</span></div><div class="ci"><label>Job Step</label><span>${ms.matched_step?.name||ms.proposed_steps?.[0]?.name||ev[0]?.step_name||"—"}</span></div><div class="ci"><label>IB Scope</label><span>market: ${f.market}</span></div></div></div>
+    <div class="sb"><div class="sbt">Section 4 — Scored Outcomes</div><div style="overflow-x:auto"><table><thead><tr><th>Outcome</th><th class="c" style="width:80px">Importance</th><th class="c" style="width:80px">Satisfaction</th><th class="c" style="width:100px">Opportunity</th><th class="c" style="width:70px">Kano</th><th class="c" style="width:70px">Signal</th></tr></thead>
+    <tbody>${ev.map(e=>`<tr><td><strong style="display:block;font-size:12px">${e.outcome_name}</strong><span style="color:var(--g400);font-size:10px">${e.out_id} • ${e.outcome_type}</span></td><td style="text-align:center">${sv(e.importance?.value)}${cfb(e.importance?.confidence||0)}</td><td style="text-align:center">${sv(e.satisfaction?.value)}${cfb(e.satisfaction?.confidence||0)}</td><td style="text-align:center">${trb(e.opportunity_score)}</td><td style="text-align:center;font-size:11px;color:var(--g500)">${e.kano_classification||""}</td><td style="text-align:center">${sgb(e.invest_signal)}</td></tr>`).join("")}</tbody></table></div></div></div>`;
+  }
+
+  if(t===3){
+    h+=`<div style="animation:fi .3s">`;
+    if(ag.length)h+=`<div class="gb gp"><div class="sbt" style="color:var(--a700)">Research Backlog (${ag.length} gaps)</div>${ag.map(g=>`<div class="gi"><strong style="color:var(--a600)">${g.id}</strong>: ${g.description}</div>`).join("")}</div>`;
+    if(ab.length)h+=`<div class="gb br"><div class="sbt" style="color:var(--r700)">Barriers (${ab.length})</div>${ab.map(b=>`<div class="gi"><strong style="color:var(--r700)">${b.id}</strong>: ${b.description}</div>`).join("")}</div>`;
+    h+=`<div class="sb"><div class="sbt">Outcome Detail — Full Rationale</div>${ev.map(e=>`<div class="dc"><div class="hd"><strong style="font-size:13px">${e.out_id}: ${e.outcome_name}</strong>${trb(e.opportunity_score)}</div><p><strong>Importance:</strong> ${e.importance?.rationale||""}</p><p><strong>Satisfaction:</strong> ${e.satisfaction?.rationale||""}</p><p><strong>Kano:</strong> ${e.kano_rationale||""}</p><p><strong>Opportunity:</strong> ${e.opportunity_derivation||""}</p></div>`).join("")}</div></div>`;
+  }
+
+  if(S.savedId){
+    h+=`<div style="margin-top:16px;display:flex;gap:10px;align-items:center;justify-content:flex-end">
+      <button class="share-btn" onclick="copyShare()">🔗 Copy Share Link</button>
+      <span style="font-size:11px;color:var(--g400)">Saved ✓</span></div>`;
+  }
+  return`<div class="card" style="padding:20px">${h}</div>`;
+}
+
+// ============================================================
+// HANDLERS
+// ============================================================
+function chPe(v){S.fd={persona:v};render()}
+function chJo(v){const j=(PERSONA_JOBS[S.fd.persona]||[]).find(x=>x.id===v);S.fd={...S.fd,jobId:v,jobName:j?.name||""};render()}
+function chPr(v){S.fd.problem=v;updBtn()}
+function chMk(v){S.fd.market=v}
+function updBtn(){
+  const pi=document.getElementById("pi");
+  const mi=document.getElementById("mi");
+  const btn=document.querySelector(".bs");
+  const cnt=document.getElementById("pcnt");
+  if(pi){
+    const len=pi.value.length;
+    if(cnt)cnt.textContent=len+"/1000 characters (minimum 10)";
+    if(cnt)cnt.className=len>0&&len<10?"h e":"h";
+    S.fd.problem=pi.value;
+  }
+  if(mi)S.fd.market=mi.value;
+  if(btn){
+    const ok=S.fd.persona&&S.fd.jobId&&(S.fd.problem||"").length>=10;
+    btn.disabled=!ok;
+  }
+}
+function st(n){S.at=n;render()}
+function reset(){S.screen="form";S.fd={};S.out=null;S.err="";S.ps=0;S.at=1;S.savedId=null;S.shareToken=null;S.nav="assess";render()}
+
+let pInt;
+
+// ============================================================
+// SUPABASE CLIENT
+// ============================================================
+let sb = null;
+const SB_DEFAULT_URL = 'https://achuinfrlnpeguxwqkkp.supabase.co';
+const SB_DEFAULT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjaHVpbmZybG5wZWd1eHdxa2twIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxODkyNjUsImV4cCI6MjA4Nzc2NTI2NX0.RfDsDyMRUMlnL66-1m5Eb0hU01WBPefZzkSbKhhAQf0';
+function getSB() {
+  if (sb) return sb;
+  const url = localStorage.getItem('helix_sb_url') || SB_DEFAULT_URL;
+  const key = localStorage.getItem('helix_sb_key') || SB_DEFAULT_KEY;
+  if (url && key && window.supabase) {
+    sb = window.supabase.createClient(url, key);
+    if (!localStorage.getItem('helix_sb_url')) { localStorage.setItem('helix_sb_url', url); localStorage.setItem('helix_sb_key', key); }
+  }
+  return sb;
+}
+function isSBReady() { return !!getSB(); }
+
+async function sbSave(fd, mr, evals, summary) {
+  const c = getSB(); if (!c) return null;
+  try {
+    const { data: ar, error: e1 } = await c.from('assessment_requests').insert({
+      persona:fd.persona, job_id:fd.jobId, job_name:fd.jobName,
+      problem_statement:fd.problem, market:fd.market,
+      is_matched:mr.matched, match_confidence:mr.confidence||0,
+      matched_step_id:mr.matched_step?.step_id, matched_step_name:mr.matched_step?.name,
+      match_rationale:mr.match_rationale,
+      overall_invest_signal:summary.overall_invest_signal, overall_confidence:summary.overall_confidence,
+      decision_context:summary.decision_context, recommendation:summary.recommendation,
+      key_findings:summary.key_findings,
+      tier_1_count:summary.tier_1_count, tier_2_count:summary.tier_2_count, total_outcomes:summary.total_outcomes,
+      proposed_job:mr.proposed_job, proposed_steps:mr.proposed_steps, created_by_name:'MOI User',
+    }).select().single();
+    if (e1) { console.error('Save err:', e1); return null; }
+    const aid = ar.id;
+    const rows = evals.map(ev => ({
+      assessment_id:aid, eval_id:ev.eval_id, out_id:ev.out_id, outcome_name:ev.outcome_name, outcome_type:ev.outcome_type,
+      step_id:ev.step_id, step_name:ev.step_name,
+      importance_value:ev.importance.value, importance_rationale:ev.importance.rationale, importance_confidence:ev.importance.confidence,
+      satisfaction_value:ev.satisfaction.value, satisfaction_rationale:ev.satisfaction.rationale, satisfaction_confidence:ev.satisfaction.confidence,
+      opportunity_score:ev.opportunity_score, opportunity_derivation:ev.opportunity_derivation, opportunity_confidence:ev.opportunity_confidence,
+      kano_classification:ev.kano_classification, kano_rationale:ev.kano_rationale,
+      invest_signal:ev.invest_signal||'research_first', invest_rationale:ev.invest_rationale||'',
+    }));
+    await c.from('outcome_evaluations').insert(rows);
+    const gaps = evals.flatMap(ev => (ev.gaps||[]).map(g => ({assessment_id:aid, gap_id:g.id, description:g.description})));
+    if (gaps.length) await c.from('knowledge_gaps').insert(gaps);
+    const bars = evals.flatMap(ev => (ev.barriers||[]).map(b => ({assessment_id:aid, barrier_id:b.id, description:b.description})));
+    if (bars.length) await c.from('barriers').insert(bars);
+    return { id:aid, shareToken:ar.share_token };
+  } catch(e) { console.error('Save fail:', e); return null; }
+}
+
+async function sbHistory() {
+  const c = getSB(); if (!c) return [];
+  const { data } = await c.from('assessment_requests')
+    .select('id, persona, job_name, problem_statement, market, is_matched, overall_invest_signal, overall_confidence, tier_1_count, total_outcomes, created_at, share_token, is_shared')
+    .order('created_at', { ascending: false }).limit(20);
+  return data || [];
+}
+
+async function sbLoad(id) {
+  const c = getSB(); if (!c) return null;
+  const [a, e, g, b] = await Promise.all([
+    c.from('assessment_requests').select('*').eq('id', id).single(),
+    c.from('outcome_evaluations').select('*').eq('assessment_id', id).order('eval_id'),
+    c.from('knowledge_gaps').select('*').eq('assessment_id', id),
+    c.from('barriers').select('*').eq('assessment_id', id),
+  ]);
+  if (a.error) return null;
+  return { assessment:a.data, evaluations:e.data||[], gaps:g.data||[], barriers:b.data||[] };
+}
+
+async function sbToggleShare(id, v) {
+  const c = getSB(); if (!c) return null;
+  const { data } = await c.from('assessment_requests').update({is_shared:v}).eq('id',id).select('share_token').single();
+  return data?.share_token;
+}
+
+function showToast(msg) { const t=document.createElement('div');t.className='saved-toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000); }
+
+// ============================================================
+// NAV + HISTORY + SETTINGS
+// ============================================================
+S.nav = 'assess';
+S.histData = [];
+S.savedId = null;
+S.shareToken = null;
+
+function setNav(n) { S.nav=n; if(n==='history'&&isSBReady()){sbHistory().then(d=>{S.histData=d;render()});} else render(); }
+
+function renderSettings() {
+  const url=localStorage.getItem('helix_sb_url')||'', key=localStorage.getItem('helix_sb_key')||'', ready=!!(url&&key);
+  return `<div class="settings-box"><h3>🔗 Supabase Connection</h3>
+    <p style="font-size:12px;color:var(--g500);margin-bottom:16px">Connect to Supabase to save assessments, view history, and share results.</p>
+    <div class="settings-row"><label>Status</label><span><span class="status-dot ${ready?'ok':'off'}"></span> ${ready?'Connected':'Not connected'}</span></div>
+    <div class="settings-row"><label>Project URL</label><input id="sb_url" type="text" placeholder="https://abcdefgh.supabase.co" value="${url}"></div>
+    <div class="settings-row"><label>Anon Key</label><input id="sb_key" type="password" placeholder="eyJhbGci..." value="${key}"></div>
+    <button class="bs" style="max-width:200px;padding:10px;font-size:13px" onclick="saveSB()">${ready?'Update':'Connect'}</button></div>
+  <div class="settings-box"><h3>ℹ️ About</h3><p style="font-size:12px;color:var(--g500);line-height:1.8">
+    <strong>Helix Market Opportunity Intelligence v1.0</strong><br>92 approved outcomes · 9 job steps · JTBD/ODI scoring<br><br>
+    <strong>AI Native App by Shikha Bhatt</strong><br>
+    <strong>Helix Framework by Ankita Agarwal</strong></p></div>`;
+}
+
+function saveSB() {
+  const url=document.getElementById('sb_url')?.value?.trim()||'', key=document.getElementById('sb_key')?.value?.trim()||'';
+  if(!url||!key){alert('Enter both fields');return}
+  localStorage.setItem('helix_sb_url',url); localStorage.setItem('helix_sb_key',key);
+  sb=null; getSB(); showToast('✓ Supabase connected!'); render();
+}
+
+function renderHistoryView() {
+  if(!isSBReady()) return `<div class="empty-state"><div class="icon">⚙️</div><h3 style="color:var(--g700);margin-bottom:8px">Supabase Not Connected</h3><p style="font-size:13px;margin-bottom:16px">Go to Settings to connect.</p><button class="bo" onclick="setNav('settings')">Settings</button></div>`;
+  if(!S.histData.length) return `<div class="empty-state"><div class="icon">📋</div><h3 style="color:var(--g700);margin-bottom:8px">No Assessments Yet</h3><p style="font-size:13px">Run your first assessment and it will appear here.</p></div>`;
+  return S.histData.map(a => {
+    const sc=a.overall_invest_signal==='invest'?'inv':a.overall_invest_signal==='research_first'?'res':'mon';
+    const dt=new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    return `<div class="hist-card" onclick="loadSaved('${a.id}')">
+      <div class="hdr"><div><strong>${a.persona} → ${a.job_name}</strong> <span class="sgb ${sc}">${(a.overall_invest_signal||'').replace(/_/g,' ')}</span></div><span style="font-size:11px;color:var(--g400)">${a.market}</span></div>
+      <p class="prb">${a.problem_statement.substring(0,120)}${a.problem_statement.length>120?'...':''}</p>
+      <div class="meta">${dt} · ${a.total_outcomes} outcomes · Conf: ${a.overall_confidence}/5${a.tier_1_count>0?` · <strong style="color:var(--r700)">${a.tier_1_count} Tier 1</strong>`:''}${a.is_shared?' · 🔗 Shared':''}</div>
+    </div>`;
+  }).join('');
+}
+
+async function loadSaved(id) {
+  const d=await sbLoad(id); if(!d){alert('Failed to load');return}
+  const a=d.assessment;
+  const evals=d.evaluations.map(ev=>({
+    eval_id:ev.eval_id,out_id:ev.out_id,outcome_name:ev.outcome_name,outcome_type:ev.outcome_type,step_name:ev.step_name,
+    importance:{value:ev.importance_value,rationale:ev.importance_rationale,confidence:ev.importance_confidence},
+    satisfaction:{value:ev.satisfaction_value,rationale:ev.satisfaction_rationale,confidence:ev.satisfaction_confidence},
+    opportunity_score:ev.opportunity_score,opportunity_derivation:ev.opportunity_derivation,opportunity_confidence:ev.opportunity_confidence,
+    kano_classification:ev.kano_classification,kano_rationale:ev.kano_rationale,invest_signal:ev.invest_signal,invest_rationale:ev.invest_rationale,
+    barriers:d.barriers.map(b=>({id:b.barrier_id,description:b.description})),
+    gaps:d.gaps.map(g=>({id:g.gap_id,description:g.description})),
+  }));
+  S.fd={persona:a.persona,jobId:a.job_id,jobName:a.job_name,problem:a.problem_statement,market:a.market};
+  S.out={evaluations:evals,matched:a.is_matched,
+    summary:{decision_context:a.decision_context,recommendation:a.recommendation,overall_confidence:a.overall_confidence,
+      key_findings:a.key_findings||[],total_outcomes:a.total_outcomes,tier_1_count:a.tier_1_count,tier_2_count:a.tier_2_count,overall_invest_signal:a.overall_invest_signal},
+    matchResult:{matched:a.is_matched,matched_step:{step_id:a.matched_step_id,name:a.matched_step_name},proposed_job:a.proposed_job,proposed_steps:a.proposed_steps,match_rationale:a.match_rationale}};
+  S.savedId=a.id; S.shareToken=a.share_token; S.screen="output"; S.nav="assess"; S.at=1; render();
+}
+
+async function copyShare() {
+  if(S.savedId&&isSBReady()){
+    await sbToggleShare(S.savedId,true);
+    const url=window.location.href.split('?')[0]+'?share='+(S.shareToken||'');
+    await navigator.clipboard.writeText(url);
+    showToast('🔗 Link copied! Anyone with this link can view.');
+  }
+}
+
+// Main assessment function with auto-save
+async function go() {
+  S.fd.problem=document.getElementById("pi")?.value||S.fd.problem||"";
+  S.fd.market=document.getElementById("mi")?.value||S.fd.market||"Global";
+  if(!S.fd.persona||!S.fd.jobId||!S.fd.problem||S.fd.problem.length<10)return;
+  S.screen="processing";S.ps=0;S.nav="assess";S.savedId=null;S.shareToken=null;render();
+  pInt=setInterval(()=>{if(S.ps<8){S.ps++;render()}},500);
+  setTimeout(async()=>{
+    clearInterval(pInt);
+    try{
+      const job=(PERSONA_JOBS[S.fd.persona]||[]).find(j=>j.id===S.fd.jobId);
+      let mr,er;
+      if(job?.available){
+        const sid=findBestStep(S.fd.problem),stp=STEPS.find(s=>s.step_id===sid);
+        er=generateEvaluations(sid,S.fd.problem,S.fd.market,true);
+        mr={matched:true,confidence:0.85,matched_step:stp,match_rationale:`Matched to "${stp?.name}".`};
+        S.out={...er,matchResult:mr};
+      } else {
+        const disc=generateDiscovery(S.fd.persona,S.fd.jobId,S.fd.problem,S.fd.market);
+        mr={matched:false,confidence:0,proposed_job:disc.proposed_job,proposed_steps:disc.proposed_steps,match_rationale:disc.match_rationale};
+        const de=disc.proposed_outcomes.map((o,i)=>({
+          eval_id:`EVAL-${String(i+1).padStart(3,"0")}`,out_id:o.id,outcome_name:o.name,outcome_type:o.type||"functional",
+          step_name:disc.proposed_steps[0]?.name||"—",step_id:disc.proposed_steps[0]?.step_id,
+          importance:{value:"high",rationale:`Job-derived importance for ${disc.proposed_job.name}.`,confidence:2},
+          satisfaction:{value:"NR",rationale:`No evidence in ${S.fd.market}. Needs research.`,confidence:0},
+          opportunity_score:"tier_5",opportunity_derivation:"High importance + NR satisfaction = Need Research.",
+          opportunity_confidence:0,kano_classification:"needs_research",kano_rationale:"Insufficient evidence.",
+          barriers:[],gaps:[{id:`GAP-${String(i+1).padStart(3,"0")}`,description:`No research for "${o.name}" in ${S.fd.market}.`}],
+          invest_signal:"research_first",invest_rationale:"Research required."
+        }));
+        er={evaluations:de,summary:{decision_context:`Discovery Mode for ${S.fd.market}.`,recommendation:`Research first — ${de.length} proposed outcomes lack evidence.`,
+          overall_confidence:1,key_findings:[`${de.length} outcomes proposed.`,"All NR on satisfaction.","Governance review required."],
+          total_outcomes:de.length,tier_1_count:0,tier_2_count:0,overall_invest_signal:"research_first"},matched:false};
+        S.out={...er,matchResult:mr};
+      }
+      // Auto-save
+      if(isSBReady()){
+        const sv=await sbSave({persona:S.fd.persona,jobId:S.fd.jobId,jobName:S.fd.jobName,problem:S.fd.problem,market:S.fd.market},mr,er.evaluations,er.summary);
+        if(sv){S.savedId=sv.id;S.shareToken=sv.shareToken;showToast('✓ Saved to Supabase');}
+      }
+      S.screen="output";S.at=1;render();
+    }catch(e){S.err=e.message;S.screen="error";render();}
+  },4500);
+}
+
+render();
+</script>
+</body>
+</html>
